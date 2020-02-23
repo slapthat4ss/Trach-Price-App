@@ -1,0 +1,52 @@
+#Libraries.
+import requests #Get the URL/+.
+from bs4 import BeautifulSoup  #Gather Information from HTTP.
+import smtplib #Send an Email.
+
+#The Target URL.
+URL = 'https://www.amazon.ae/Black-Decker-VM1200-B5-Bagged-Cleaner/dp/B071WM22H7/ref=sr_1_3?keywords=vaccum&qid=1582471174&sr=8-3'
+
+#Google Your User Agent.
+headers = {"User-Agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.106 Safari/537.36'}
+
+
+#Funtion to Check the Price.
+
+def check_price():
+    page = requests.get(URL, headers=headers) #Request the URL.
+
+    soup = BeautifulSoup(page.content, 'html.parser') #Gather the Page HTML.
+
+    title = soup.find(id="productTitle").get_text() #Get the ID form the HTML page.
+    price_raw = soup.find(id="priceblock_ourprice").get_text()
+    price = float(price_raw[3:]) #Eleminate the decimal from price.
+
+    if (price < 200.0): #Set the Price Target.
+        send_mail()   
+
+
+def send_mail(): #Send the Mail Funtion
+    server = smtplib.SMTP('smtp.gmail.com', 587) #Its Simple mail protocol send via port 587 for Gmail.
+    server.starttls()#start server
+    server.login('hamad.altamimi97@gmail.com', 'dvqhoxxfjkyxqkiy') #Email, The Generated Password.
+
+
+    msg = 'The Vacum price is lower Now !!, Check the price of the vacum price is lower now https://www.amazon.ae/Black-Decker-VM1200-B5-Bagged-Cleaner/dp/B071WM22H7/ref=sr_1_3?keywords=vaccum&qid=1582471174&sr=8-3'
+
+    server.sendmail(
+        'hamad.altamimi97@gmail.com',
+        'hamad-altamimi@live.com', msg
+    )#Sender, Reciever, The Massage
+
+    print('The Massage has been sent !!!')
+
+    server.quit()#Close the server
+
+check_price()    
+
+   
+
+
+
+
+
